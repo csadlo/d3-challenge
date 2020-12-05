@@ -46,8 +46,8 @@ d3.csv("assets/data/data.csv").then(function(inputData, err) {
     // Add Y axis
     var yLinearScale1 = d3.scaleLinear()
         //.domain([0, 50000])
-        .domain([0.9 * d3.min(inputData, d=> d.poverty), d3.max(inputData, d => d.obesity) * 1.1])
-        .range([ height, 0]);
+        .domain([d3.min(inputData, d=> d.poverty), d3.max(inputData, d => d.obesity) * 1.1])
+        .range([height, 0]);
 
     // Create axis functions
     var bottomAxis = d3.axisBottom(xLinearScale)
@@ -63,16 +63,30 @@ d3.csv("assets/data/data.csv").then(function(inputData, err) {
         .attr("transform", "translate(0,0)")
         .call(leftAxis);
 
-    // Add dots
+    // Add circles
+    var circlesGroup = svg.selectAll("circle")
+        .data(inputData)
+        .enter()
+        .append("circle")
+        .attr("cx", d => xLinearScale(d.poverty))
+        .attr("cy", d => yLinearScale1(d.obesity))
+        .attr("r", "15")
+        .attr("fill", "#69b3a2")
+        .attr("opacity", "0.75")
+        .attr("stroke-width", "1")
+        .attr("stroke", "darkgreen");
+
+    // Add the state abbreviations
+    //var textLabelsGroup = svg.selectAll(null)
     svg.append('g')
         .selectAll("dot")
         .data(inputData)
         .enter()
-        .append("circle")
-        .attr("cx", function (d) { return xLinearScale(d.poverty); } )
-        .attr("cy", function (d) { return yLinearScale1(d.obesity); } )
-        .attr("r", 1.5)
-        .style("fill", "#69b3a2")
+        .append("text")
+        .attr("x", function (d) { return (xLinearScale(d.poverty)) - 10; } )
+        .attr("y", function (d) { return (yLinearScale1(d.obesity)) + 5; } )
+        .text(d => d.abbr)
+        .style("fill", "black")
 
 
 // //     // // new X axis
@@ -89,5 +103,9 @@ d3.csv("assets/data/data.csv").then(function(inputData, err) {
 // //     //     .duration(2000)
 // //     //     .attr("cx", function (d) { return x(d.GrLivArea); } )
 // //     //     .attr("cy", function (d) { return y(d.SalePrice); } )
-
+}).catch(function(error) {
+    console.log(error);
 });
+
+
+//});
