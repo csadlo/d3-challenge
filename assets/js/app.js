@@ -1,4 +1,3 @@
-// @TODO: YOUR CODE HERE!
 
 var svgWidth = 960;
 var svgHeight = 500;
@@ -22,7 +21,7 @@ var svg = d3.select("#my_dataviz")
             .attr("transform",
                 "translate(" + margin.left + "," + margin.top + ")")
 
-// // //Read the data
+// Read the data
 d3.csv("assets/data/data.csv").then(function(inputData, err) {
 
     if (err) throw err;
@@ -63,7 +62,7 @@ d3.csv("assets/data/data.csv").then(function(inputData, err) {
         .attr("transform", "translate(0,0)")
         .call(leftAxis);
 
-    // Add circles
+    // // Add circles
     var circlesGroup = svg.selectAll("circle")
         .data(inputData)
         .enter()
@@ -76,10 +75,11 @@ d3.csv("assets/data/data.csv").then(function(inputData, err) {
         .attr("stroke-width", "1")
         .attr("stroke", "darkgreen");
 
+
     // Add the state abbreviations
-    //var textLabelsGroup = svg.selectAll(null)
+    var textLabelsGroup = svg.selectAll(null)
     svg.append('g')
-        .selectAll("dot")
+        .selectAll(null)
         .data(inputData)
         .enter()
         .append("text")
@@ -89,23 +89,52 @@ d3.csv("assets/data/data.csv").then(function(inputData, err) {
         .style("fill", "black")
 
 
-// //     // // new X axis
-// //     // x.domain([0, 4000])
-// //     // svg.select(".myXaxis")
-// //     //     .transition()
-// //     //     .duration(2000)
-// //     //     .attr("opacity", "1")
-// //     //     .call(d3.axisBottom(x));
+    // Step 1: Initialize Tooltip
+    var toolTip = d3.tip()
+        .attr("class", "d3-tip")
+        .offset([80, -60])
+        .html(function(d) {
+            return (`${d.state}<br>Poverty ${d.poverty}%<br>Obesity ${d.obesity}%`);
+        });
 
-// //     // svg.selectAll("circle")
-// //     //     .transition()
-// //     //     .delay(function(d,i){return(i*3)})
-// //     //     .duration(2000)
-// //     //     .attr("cx", function (d) { return x(d.GrLivArea); } )
-// //     //     .attr("cy", function (d) { return y(d.SalePrice); } )
+    // Step 2: Create the tooltip in chartGroup.
+    svg.call(toolTip);
+
+    // Step 3: Create "mouseover" event listener to display tooltip
+    circlesGroup.on("mouseover", function(d) {
+        toolTip.show(d, this);
+    })
+    // Step 4: Create "mouseout" event listener to hide tooltip
+        .on("mouseout", function(d) {
+            toolTip.hide(d);
+        });
+
+    // Step 3: Create "mouseover" event listener to display tooltip
+    textLabelsGroup.on("mouseover", function(d) {
+        toolTip.show(d, this);
+    })
+    // Step 4: Create "mouseout" event listener to hide tooltip
+        .on("mouseout", function(d) {
+            toolTip.hide(d);
+        });
+
+    
+    // Create axes labels
+    var xAxisLabel = svg.append("text")
+        .attr("transform", `translate(${width / 2}, ${height + margin.top + 30})`)
+        .attr("class", "axisText")
+        .text("Poverty (%)");
+    
+    var yAxisLabel = svg.append("text")
+        .attr("transform", "rotate(-90)")
+        .attr("x", 0 - ((height + margin.top + 30) / 2))
+        .attr("y", 0 - margin.left + 40)
+        .attr("dy", "1em")
+        .attr("class", "axisText")
+        .text("Obesity (%)");
+
+
 }).catch(function(error) {
     console.log(error);
 });
 
-
-//});
