@@ -39,13 +39,13 @@ d3.csv("assets/data/data.csv").then(function(inputData, err) {
     // Create scaling functions
     var xLinearScale = d3.scaleLinear()
         //.domain([0, 4000])
-        .domain([0.9 * d3.min(inputData, d=> d.poverty), d3.max(inputData, d => d.poverty) * 1.1])
+        .domain([0.9 * d3.min(inputData, d => d.poverty), d3.max(inputData, d => d.poverty) * 1.1])
         .range([0, width]);
 
     // Add Y axis
     var yLinearScale1 = d3.scaleLinear()
         //.domain([0, 50000])
-        .domain([d3.min(inputData, d=> d.poverty), d3.max(inputData, d => d.obesity) * 1.1])
+        .domain([0.9 * d3.min(inputData, d => d.obesity), d3.max(inputData, d => d.obesity) * 1.1])
         .range([height, 0]);
 
     // Create axis functions
@@ -84,7 +84,7 @@ d3.csv("assets/data/data.csv").then(function(inputData, err) {
         .enter()
         .append("text")
         .attr("x", function (d) { return (xLinearScale(d.poverty)) - 10; } )
-        .attr("y", function (d) { return (yLinearScale1(d.obesity)) + 5; } )
+        .attr("y", function (d) { return (yLinearScale1(d.obesity)) + 6; } )
         .text(d => d.abbr)
         .style("fill", "black")
 
